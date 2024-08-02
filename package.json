@@ -11,7 +11,8 @@
   "description": "There are about 55 servers in the list , with chat , movie , tv servers. Run the script to find which servers are accessible via your WiFi .",
   "main": "script.js",
   "scripts": {
-    "start": "node script.js"
+    "start": "node script.js",
+    "build": "npm install --save-dev pkg && ./node_modules/.bin/pkg ."
   },
   "bin": "script.js",
   "pkg": {
@@ -24,5 +25,8 @@
     ],
     "outputPath": "build"
   },
-  "license": "AGPL-3.0-only"
+  "license": "AGPL-3.0-only",
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  }
 }

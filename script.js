@@ -9,8 +9,9 @@ const { URL } = require('url');
 const path = require('path');
 
 
-const servers = path.join(__dirname, 'servers.csv');
-
+const args = process.argv.slice(2);
+let servers = args.length ? args[0] : path.join(__dirname, 'servers.csv');
+console.log(servers)
 const timeout = env.TIMEOUT | 10000
 
 
@@ -19,10 +20,10 @@ let bufferCount = 0;
 
 fs.createReadStream(servers)
   .pipe(csv())
-  .on('data',async (row) => await checkUrl(row))
+  .on('data', async (row) => await checkUrl(row))
   .on('end', () => {
     console.log('Finished reading csv')
-});
+  });
 
 async function checkUrl(row) {
   const url = new URL(row.URL);
@@ -48,29 +49,29 @@ async function checkUrl(row) {
   })
 
   let pingHost = await ping.promise.probe(host)
-if (pingHost.alive || httpSupport || httpsSupport) {
-  if (typeof outputMap[row.Category] === 'undefined') outputMap[row.Category] = [{
-    Name:row.name,
-    URL:row.URL,
-    Comment:row.Comment,
-    ping:pingHost.alive,
-    pingTime:pingHost.time,
-    http:httpSupport,
-    https:httpsSupport,
-  }]
+  if (pingHost.alive || httpSupport || httpsSupport) {
+    if (typeof outputMap[row.Category] === 'undefined') outputMap[row.Category] = [{
+      Name: row.name,
+      URL: row.URL,
+      Comment: row.Comment,
+      ping: pingHost.alive,
+      pingTime: pingHost.time,
+      http: httpSupport,
+      https: httpsSupport,
+    }]
     else outputMap[row.Category].push({
-      Name:row.Name,
-      URL:row.URL,
-      Comment:row.Comment,
-      ping:pingHost.alive,
-      pingTime:pingHost.time,
-      http:httpSupport,
-      https:httpsSupport,
+      Name: row.Name,
+      URL: row.URL,
+      Comment: row.Comment,
+      ping: pingHost.alive,
+      pingTime: pingHost.time,
+      http: httpSupport,
+      https: httpsSupport,
     })
-}
+  }
   bufferCount--;
   console.log(`Finished : ${row.URL}`)
-  if (bufferCount==0) generateTXT()
+  if (bufferCount == 0) generateTXT()
 }
 
 function generateTXT() {
@@ -78,31 +79,31 @@ function generateTXT() {
   //console.log(outputMap)
   let finalResult = ""
   for (let i in outputMap) {
-    if (outputMap[i].length!=0) {
+    if (outputMap[i].length != 0) {
       finalResult += "----------------------------------- "
       finalResult += `Category : ${i}`
       finalResult += " -----------------------------------"
       for (let j of outputMap[i]) {
-          let report = `\n\n--- ${j.Name} ---\n`
-          report+=`URL\t\t\t\t\t: ${j.URL}\n`
-          if (j.ping) {
-            report += `Ping\t\t\t\t: took ${j.pingTime}\n`
-          } else {
-            report += `Ping\t\t\t\t: failed\n`
-          }
-          let browerAccessible = j.http || j.https
-          if (browerAccessible) {
-            report += `Browser accessible\t: ${browerAccessible}\n`
-            report += `TLS support\t\t\t: ${j.https}\n`
-          } else {
-            report += `Browser accessible\t: No, Contact server ISP to unblock your IP\n`
-          }
-          report += `Comment: ${j.Comment}\n`
-          finalResult += report
+        let report = `\n\n--- ${j.Name} ---\n`
+        report += `URL\t\t\t\t\t: ${j.URL}\n`
+        if (j.ping) {
+          report += `Ping\t\t\t\t: took ${j.pingTime}\n`
+        } else {
+          report += `Ping\t\t\t\t: failed\n`
+        }
+        let browerAccessible = j.http || j.https
+        if (browerAccessible) {
+          report += `Browser accessible\t: ${browerAccessible}\n`
+          report += `TLS support\t\t\t: ${j.https}\n`
+        } else {
+          report += `Browser accessible\t: No, Contact server ISP to unblock your IP\n`
+        }
+        report += `Comment: ${j.Comment}\n`
+        finalResult += report
       }
       finalResult += '\n\n'
     }
   }
-  fs.writeFileSync('working_url.txt',finalResult)
+  fs.writeFileSync('working_url.txt', finalResult)
   console.log("Finished!")
 }

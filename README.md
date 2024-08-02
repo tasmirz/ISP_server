@@ -5,6 +5,10 @@ There are about 55 servers in the list , with chat , movie , tv servers. Run the
 ## Running the appilcation
 ### From prebuilt binary
 1. Download executable from [releases](https://github.com/tasmirz/ISP_server/releases).
+#### Advanced Usage
+1. Download [servers.csv](https://raw.githubusercontent.com/tasmirz/ISP_server/main/servers.csv)
+2. Drag the servers.csv on the executable
+3. Download the updated servers.csv periodically
 ### From Source
 1. Download this code as zip
 2. Install Node.js if you haven't
@@ -17,13 +21,11 @@ npm install
 npm start
 ```
 5. The list will be generated and stored in `working_url.txt` file.
-#### Build From Source
-1. Install nexe ```bash npm install -g pkg```
-2. Build 
+#### Build From Source 
 ```bash
-pkg .
-```
-3. Find built executables for Linux and windows on `build` directory
+ npm run build
+ ```
+>Find built executables for Linux and windows on `build` directory
 ## Contibuting
 1. Fork this repo
 2. Add your servers to the [server.csv](./servers.csv) file (you can edit it with MS Excel)
